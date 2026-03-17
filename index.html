@@ -132,6 +132,9 @@
       .grid { grid-template-columns: 1fr; }
     }
   </style>
+
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-messaging-compat.js"></script>
 </head>
 <body>
   <div class="container">
@@ -455,8 +458,6 @@
       ticker = setInterval(checkDueBeds, 1000);
     }
 
-import('https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js');
-import('https://www.gstatic.com/firebasejs/9.23.0/firebase-messaging-compat.js');
 
 const firebaseConfig = {
   apiKey: "AIzaSyAuhEsWzOuFWOLGYSkHjVnBsRi6UidsSEc",
@@ -468,26 +469,44 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 
-const messaging = firebase.messaging();
-
 async function activarPush() {
   try {
+    if (!window.isSecureContext) {
+      alert('Abre la app desde GitHub Pages con HTTPS.');
+      return;
+    }
+
+    if (!('Notification' in window)) {
+      alert('Este dispositivo o entorno no soporta notificaciones web.');
+      return;
+    }
+
     const permission = await Notification.requestPermission();
     if (permission !== 'granted') {
       alert('Permiso denegado');
       return;
     }
 
+    const swRegistration = await navigator.serviceWorker.register('./firebase-messaging-sw.js');
+
+    const messaging = firebase.messaging();
+
     const token = await messaging.getToken({
-      vapidKey: 'TU_VAPID_KEY'
+      vapidKey: 'BN7v8VK-a7jpry-9mULLLJI9cJdjSZg6Z9L_fpvWF_qs_RXAMS61KVn0FBGMRwbj4HccNR8UHIYhPgMpCDCxm9k',
+      serviceWorkerRegistration: swRegistration
     });
 
-    console.log('TOKEN:', token);
+    console.log('TOKEN FCM:', token);
+
+    if (!token) {
+      alert('No se pudo obtener token.');
+      return;
+    }
 
     alert('Push activado 🔥');
-
   } catch (err) {
-    console.error(err);
+    console.error('Error activando push:', err);
+    alert('Error activando push. Revisa consola.');
   }
 }
 
