@@ -1,533 +1,59 @@
 <!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cuidados Hospitalarios - Cambios de Posición</title>
-  <style>
-    :root {
-      --bg: #f4f7fb;
-      --card: #ffffff;
-      --text: #1f2937;
-      --muted: #6b7280;
-      --primary: #2563eb;
-      --primary-dark: #1d4ed8;
-      --danger: #dc2626;
-      --danger-dark: #b91c1c;
-      --ok: #059669;
-      --border: #e5e7eb;
-      --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-    }
-
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      padding: 20px;
-    }
-
-    .container {
-      max-width: 1100px;
-      margin: 0 auto;
-    }
-
-    h1 {
-      margin: 0 0 8px;
-      font-size: 1.9rem;
-    }
-
-    .subtitle {
-      margin: 0 0 20px;
-      color: var(--muted);
-      line-height: 1.5;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: 360px 1fr;
-      gap: 20px;
-    }
-
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      box-shadow: var(--shadow);
-      padding: 18px;
-    }
-
-    .card h2 {
-      margin-top: 0;
-      font-size: 1.1rem;
-    }
-
-    label {
-      display: block;
-      font-weight: 600;
-      margin: 12px 0 6px;
-    }
-
-    input, select {
-      width: 100%;
-      padding: 12px;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      font-size: 1rem;
-      background: #fff;
-    }
-
-    .row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-
-    button {
-      border: none;
-      border-radius: 12px;
-      padding: 12px 16px;
-      font-size: 0.98rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: transform 0.08s ease, opacity 0.2s ease, background 0.2s ease;
-    }
-
-    button:active { transform: scale(0.98); }
-
-    .btn-primary {
-      background: var(--primary);
-      color: white;
-      width: 100%;
-      margin-top: 16px;
-    }
-
-    .btn-primary:hover { background: var(--primary-dark); }
-
-    .btn-danger {
-      background: var(--danger);
-      color: white;
-    }
-
-    .btn-danger:hover { background: var(--danger-dark); }
-
-    .btn-secondary {
-      background: #eef2ff;
-      color: #3730a3;
-    }
-
-    .toolbar {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-bottom: 14px;
-    }
-
-    .small {
-      color: var(--muted);
-      font-size: 0.92rem;
-      line-height: 1.45;
-    }
-
-    .beds {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 14px;
-    }
-
-    .bed-card {
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 14px;
-      background: #fff;
-      position: relative;
-    }
-
-    .bed-title {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 8px;
-    }
-
-    .bed-title h3 {
-      margin: 0;
-      font-size: 1.05rem;
-    }
-
-    .status {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 0.83rem;
-      padding: 5px 9px;
-      border-radius: 999px;
-      font-weight: 700;
-    }
-
-    .status.active {
-      background: #dcfce7;
-      color: #166534;
-    }
-
-    .status.paused {
-      background: #fee2e2;
-      color: #991b1b;
-    }
-
-    .bed-meta {
-      color: var(--muted);
-      font-size: 0.92rem;
-      line-height: 1.55;
-      margin-bottom: 12px;
-    }
-
-    .timer {
-      font-size: 1.5rem;
-      font-weight: 800;
-      margin-bottom: 12px;
-    }
-
-    .actions {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .actions button {
-      flex: 1;
-      min-width: 100px;
-    }
-
-    .empty {
-      text-align: center;
-      color: var(--muted);
-      padding: 30px 12px;
-      border: 1px dashed var(--border);
-      border-radius: 16px;
-      background: rgba(255,255,255,0.7);
-    }
-
-    .footer-note {
-      margin-top: 16px;
-      font-size: 0.88rem;
-      color: var(--muted);
-      line-height: 1.5;
-    }
-
-    .alert-banner {
-      display: none;
-      position: sticky;
-      top: 0;
-      z-index: 50;
-      margin-bottom: 16px;
-      background: #fef2f2;
-      border: 1px solid #fecaca;
-      color: #991b1b;
-      border-radius: 14px;
-      padding: 14px;
-      box-shadow: var(--shadow);
-      font-weight: 700;
-    }
-
-    @media (max-width: 850px) {
-      .grid {
-        grid-template-columns: 1fr;
-      }
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <div id="alertBanner" class="alert-banner"></div>
-
-    <h1>Cuidados Hospitalarios</h1>
-    <p class="subtitle">
-      Recordatorio de cambios de posición para varias camas al mismo tiempo, en minutos.
-      Mantén esta app abierta para mejor funcionamiento.
-    </p>
-
-    <div class="grid">
-      <section class="card">
-        <h2>Agregar cama / paciente</h2>
-
-        <label for="bedName">Cama o paciente</label>
-        <input id="bedName" type="text" placeholder="Ej: Cama 401 / Juan Pérez" />
-
-        <div class="row">
-          <div>
-            <label for="intervalMinutes">Intervalo (minutos)</label>
-            <input id="intervalMinutes" type="number" min="1" value="120" />
-          </div>
-          <div>
-            <label for="positionType">Tarea</label>
-            <select id="positionType">
-              <option value="Cambio de posición">Cambio de posición</option>
-              <option value="Control">Control</option>
-              <option value="Movilización">Movilización</option>
-              <option value="Otro cuidado">Otro cuidado</option>
-            </select>
-          </div>
-        </div>
-
-        <button class="btn-primary" onclick="addBed()">Agregar recordatorio</button>
-
-        <p class="footer-note">
-          Cada cama queda con su propio temporizador independiente. Al vencer, se reinicia automáticamente.
-        </p>
-      </section>
-
-      <section class="card">
-        <div class="toolbar">
-          <button class="btn-secondary" onclick="requestNotifPermission()">Activar notificaciones</button>
-          <button class="btn-secondary" onclick="testAlarm()">Probar alarma</button>
-          <button class="btn-danger" onclick="stopAll()">Detener todas</button>
-        </div>
-
-        <div id="bedsContainer" class="beds"></div>
-      </section>
-    </div>
-  </div>
-
-  <script>
-    const STORAGE_KEY = 'hospital_care_beds_v1';
-    let beds = [];
-    let ticker = null;
-    let audioCtx = null;
-
-    function uid() {
-      return Math.random().toString(36).slice(2, 10);
-    }
-
-    function now() {
-      return Date.now();
-    }
-
-    function saveBeds() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(beds));
-    }
-
-    function loadBeds() {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return;
-      try {
-        beds = JSON.parse(raw);
-      } catch (e) {
-        beds = [];
-      }
-    }
-
-    function addBed() {
-      const name = document.getElementById('bedName').value.trim();
-      const intervalMinutes = parseInt(document.getElementById('intervalMinutes').value, 10);
-      const task = document.getElementById('positionType').value;
-
-      if (!name) {
-        alert('Escribe una cama o nombre de paciente.');
-        return;
-      }
-
-      if (!intervalMinutes || intervalMinutes < 1) {
-        alert('El intervalo debe ser mayor o igual a 1 minuto.');
-        return;
-      }
-
-      const newBed = {
-        id: uid(),
-        name,
-        task,
-        intervalMinutes,
-        intervalMs: intervalMinutes * 60 * 1000,
-        nextDue: now() + intervalMinutes * 60 * 1000,
-        lastAlertAt: null,
-        active: true,
-        createdAt: now()
-      };
-
-      beds.unshift(newBed);
-      saveBeds();
-      renderBeds();
-
-      document.getElementById('bedName').value = '';
-      document.getElementById('intervalMinutes').value = intervalMinutes;
-      document.getElementById('positionType').value = task;
-    }
-
-    function formatRemaining(ms) {
-      if (ms < 0) ms = 0;
-      const totalSeconds = Math.floor(ms / 1000);
-      const minutes = Math.floor(totalSeconds / 60);
-      const seconds = totalSeconds % 60;
-      const hours = Math.floor(minutes / 60);
-      const mins = minutes % 60;
-
-      if (hours > 0) {
-        return `${String(hours).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-      }
-      return `${String(mins).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-    }
-
-    function formatClock(ts) {
-      return new Date(ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    }
-
-    function removeBed(id) {
-      beds = beds.filter(b => b.id !== id);
-      saveBeds();
-      renderBeds();
-    }
-
-    function toggleBed(id) {
-      beds = beds.map(b => {
-        if (b.id !== id) return b;
-        if (b.active) {
-          return { ...b, active: false };
+        const reg = await navigator.serviceWorker.getRegistration();
+        if (reg) {
+          reg.showNotification(title, { body, icon: './icon-192.png', badge: './icon-192.png' });
+          return;
         }
-        return {
-          ...b,
-          active: true,
-          nextDue: now() + b.intervalMs,
-          lastAlertAt: null
-        };
-      });
-      saveBeds();
-      renderBeds();
-    }
-
-    function markDone(id) {
-      beds = beds.map(b => {
-        if (b.id !== id) return b;
-        return {
-          ...b,
-          active: true,
-          nextDue: now() + b.intervalMs,
-          lastAlertAt: null
-        };
-      });
-      saveBeds();
-      renderBeds();
-      hideBanner();
-    }
-
-    function stopAll() {
-      beds = beds.map(b => ({ ...b, active: false }));
-      saveBeds();
-      renderBeds();
-      hideBanner();
-    }
-
-    function requestNotifPermission() {
-      if (!('Notification' in window)) {
-        alert('Este navegador no soporta notificaciones web.');
-        return;
       }
-      Notification.requestPermission().then(permission => {
-        if (permission === 'granted') {
-          alert('Notificaciones activadas.');
-        } else {
-          alert('No se otorgaron permisos de notificación.');
-        }
-      });
-    }
 
-    function playBeep() {
-      try {
-        if (!audioCtx) {
-          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        }
-        const oscillator = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        oscillator.connect(gain);
-        gain.connect(audioCtx.destination);
-        oscillator.type = 'sine';
-        oscillator.frequency.value = 880;
-        gain.gain.setValueAtTime(0.001, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.2, audioCtx.currentTime + 0.01);
-        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
-        oscillator.start();
-        oscillator.stop(audioCtx.currentTime + 0.5);
-      } catch (e) {
-        console.log('No se pudo reproducir sonido:', e);
-      }
-    }
-
-    function testAlarm() {
-      playBeep();
-      showBanner('Prueba de alarma realizada.');
-      setTimeout(hideBanner, 2500);
-    }
-
-    function showBanner(text) {
-      const banner = document.getElementById('alertBanner');
-      banner.style.display = 'block';
-      banner.textContent = text;
-    }
-
-    function hideBanner() {
-      const banner = document.getElementById('alertBanner');
-      banner.style.display = 'none';
-      banner.textContent = '';
-    }
-
-    function sendNotification(title, body) {
-      if ('Notification' in window && Notification.permission === 'granted') {
-        new Notification(title, { body });
-      }
+      new Notification(title, { body });
     }
 
     function checkDueBeds() {
       const current = now();
-      let hasActiveAlert = false;
+      let dueBeds = [];
 
       beds = beds.map(b => {
         if (!b.active) return b;
-
         if (current >= b.nextDue) {
-          const alreadyAlertedThisCycle = b.lastAlertAt && b.lastAlertAt >= b.nextDue;
-          if (!alreadyAlertedThisCycle) {
+          const alreadyAlerted = b.lastAlertAt && b.lastAlertAt >= b.nextDue;
+          if (!alreadyAlerted) {
             playBeep();
             sendNotification('Cuidado pendiente', `${b.task}: ${b.name}`);
             b.lastAlertAt = current;
           }
-          hasActiveAlert = true;
+          dueBeds.push(b);
         }
         return b;
       });
 
-      if (hasActiveAlert) {
-        const dueNames = beds
-          .filter(b => b.active && current >= b.nextDue)
-          .map(b => `${b.name} (${b.task})`)
-          .join(' • ');
-        showBanner(`Pendiente ahora: ${dueNames}`);
+      if (dueBeds.length) {
+        showBanner(`Pendiente ahora: ${dueBeds.map(b => `${b.name} (${b.task})`).join(' • ')}`);
       }
 
       saveBeds();
       renderBeds(false);
     }
 
-    function renderBeds(full = true) {
+    function renderBeds() {
       const container = document.getElementById('bedsContainer');
-
       if (!beds.length) {
         container.innerHTML = '<div class="empty">No hay camas activas todavía.</div>';
         return;
       }
 
       const current = now();
-
       container.innerHTML = beds.map(b => {
         const overdue = b.active && current >= b.nextDue;
         const remaining = b.active ? formatRemaining(b.nextDue - current) : 'Pausado';
+        const statusClass = !b.active ? 'paused' : overdue ? 'due' : 'active';
+        const statusText = !b.active ? 'Pausado' : overdue ? 'Pendiente' : 'Activo';
 
         return `
           <div class="bed-card">
             <div class="bed-title">
               <h3>${escapeHtml(b.name)}</h3>
-              <span class="status ${b.active ? 'active' : 'paused'}">${b.active ? (overdue ? 'Pendiente' : 'Activo') : 'Pausado'}</span>
+              <span class="status ${statusClass}">${statusText}</span>
             </div>
             <div class="bed-meta">
               <div><strong>Tarea:</strong> ${escapeHtml(b.task)}</div>
